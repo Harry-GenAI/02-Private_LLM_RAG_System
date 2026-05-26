@@ -59,8 +59,11 @@ def compress_context(query, docs):
     return context, list(set(sources))
 
 
-def retrieve_context(query, k=5, metadata_filter: dict | None = None):
+def retrieve_context(query, k=8, metadata_filter: dict | None = None):
+    
     results = vector_db.similarity_search(query, k=k)
+    
+    #Metadata Filter
     filtered_docs = []
 
     for doc in results:
@@ -76,7 +79,8 @@ def retrieve_context(query, k=5, metadata_filter: dict | None = None):
 
     if not filtered_docs:
         return "", []
-
+    
+    #ReRanker
     pairs = [(query, doc.page_content) for doc in filtered_docs]
     scores = reranker.predict(pairs)
 

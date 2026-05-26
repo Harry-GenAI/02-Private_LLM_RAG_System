@@ -1,0 +1,15 @@
+
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest                        # Pulls the official, pre-compiled Prometheus engine image
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Mounts your local configuration directly into the container
+    network_mode: "host"                                 # Allows the container to read 'localhost' services natively
+
+  grafana:
+    image: grafana/grafana:latest                        # Pulls the official Grafana UI server dashboard image
+    container_name: grafana
+    network_mode: "host"

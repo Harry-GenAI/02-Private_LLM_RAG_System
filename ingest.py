@@ -11,13 +11,13 @@ import re
 #embed model
 embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-#clean text fun
+#clean text fun/pre-processing fun
 def clean_text(text):
-   #replacing then \n with space but not touching the "\n\n"
+   #replacing the \n with space but not touching the "\n\n"
    text = re.sub(r'((?<!\n)\n(?!\n))', ' ', text)
    #collapse multiple spaces into one
    text = re.sub(r' +', ' ', text)
-   #Fix removing any string started with . or , or any other special charcs after chunking
+   #Fix removing any string started with . or any other special charcs after chunking
    text = re.sub(r'^[\.\,\-\:]+\s*', '', text)
 
    return text.strip()
@@ -36,7 +36,6 @@ def load_docs(folder="docs"):
 
       #add metadata:
       for doc in docs:
-         doc.page_content = clean_text(doc.page_content) #clean the text
          doc.metadata["source"]=file
          doc.metadata["doc_type"]=file.replace(".pdf","")
          doc.metadata["department"]="general"
@@ -86,7 +85,7 @@ def main():
 
    logger.info(f"\n\n----ingestion completed with {len(chunks)} chunks-----\n")
    
-
+#entry-point guard
 if __name__ == "__main__":
    main()
 

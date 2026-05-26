@@ -4,11 +4,13 @@ from logger import logger
 import asyncio
 import os
 
-# Point to the local folder so it loads instantly
-MODEL_PATH = "./local_model" 
 
-logger.info("Loading model from local storage...")
+# EKS/Kubernetes can mount the model here from an init container or persistent volume.
+MODEL_PATH = os.getenv("MODEL_PATH", "./local_model")
 
+logger.info(f"Loading model from {MODEL_PATH}")
+
+#CUDA
 if torch.cuda.is_available():
     MODEL_DEVICE = "cuda"
     MODEL_DTYPE = torch.float16
@@ -16,7 +18,10 @@ else:
     MODEL_DEVICE = "cpu"
     MODEL_DTYPE = torch.float32
 
+#Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
+
+#Load model
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_PATH,
     torch_dtype=MODEL_DTYPE,

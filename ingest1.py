@@ -6,7 +6,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 
 # 1. Setup Embeddings
-#embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # 2. Preprocessing fun or Clean Text Function (Regex to fix PDF line breaks)
 def clean_text(text):
@@ -37,7 +37,7 @@ def load_docs(folder="docs"):
 
         # Apply cleaning and add your specific metadata
         for doc in docs:
-            doc.page_content = clean_text(doc.page_content)
+            #doc.page_content = clean_text(doc.page_content)
             doc.metadata["source"] = file
             doc.metadata["doc_type"] = file.replace(".pdf", "")
             doc.metadata["department"] = "general"
@@ -85,7 +85,8 @@ def main():
     # Build Database
     # build_vectordb(chunks)
     
-    print(chunks, len(chunks))
+    for i, document in enumerate(documents):
+        print(f"doc{i}\n {document}\n\n")
     #print(documents)
 
 if __name__ == "__main__":

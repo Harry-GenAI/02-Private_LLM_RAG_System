@@ -11,16 +11,25 @@ __pycache__/
 build/
 dist/
 *.egg-info/
-.chroma_db/
+chroma_db/
+k8s/
+local_model.zip
+chroma_db_backup_*/
+local_model/
+
 
 # Local/debug-only scripts
 main1.py
 prac.py
 rag1.py
 llmservice1.py
+notes.py
 
 # Personal notes and local documents
 *.docx
+core-key.pem
+*.txt
+
 
 # Tool/cache folders
 .pytest_cache/

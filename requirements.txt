@@ -3,7 +3,7 @@ uvicorn
 pydantic
 psycopg2-binary
 python-dotenv
-torch
+openai
 transformers
 huggingface-hub
 langchain-huggingface

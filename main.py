@@ -19,7 +19,7 @@ if not os.path.exists("chroma_db") or not os.listdir("chroma_db"):
 from rag import retrieve_context
 from llmservice import generate_reply
 from prompts import build_prompt
-from guardrails import is_safe
+from safety import is_safe_input
 from query_rewriter import rewrite_query
 
 
@@ -28,7 +28,10 @@ from query_rewriter import rewrite_query
 # ---------------------------------------------------------
 logger.info("Starting Enterprise RAG API")
 
-create_table()
+try:
+    create_table()
+except Exception:
+    logger.exception("Chat history table initialization failed; continuing without memory")
 
 app = FastAPI()
 
@@ -72,7 +75,7 @@ async def chat(req: ChatRequest):
     # -----------------------------------------------------
     # Guardrails check
     # -----------------------------------------------------
-    if not is_safe(req.message):
+    if not is_safe_input(req.message):
         return {
             "answer": "Request blocked by policy.",
             "session_id": session_id,
@@ -83,12 +86,20 @@ async def chat(req: ChatRequest):
     # -----------------------------------------------------
     # Load conversation memory
     # -----------------------------------------------------
-    history = get_chat_history(session_id)
+    try:
+        history = get_chat_history(session_id)
+    except Exception:
+        logger.exception("Chat history load failed; continuing without memory")
+        history = ""
 
     # -----------------------------------------------------
     # Rewrite vague questions
     # -----------------------------------------------------
-    rewritten_query = rewrite_query(req.message, history)
+    rewritten_query = await asyncio.to_thread(
+        rewrite_query,
+        req.message,
+        history
+    )
 
     # -----------------------------------------------------
     # Metadata filter (domain routing)
