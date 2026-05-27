@@ -2,6 +2,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from sentence_transformers import CrossEncoder
 import re
+from logger import logger
 
 
 # Embedding model used for the persisted Chroma collection.
@@ -19,13 +20,16 @@ reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 def compress_context(query, docs):
     sentences = []
+    seen_sentences = set()
 
     for doc in docs:
         #looks for a period, exclamation, or question mark, but only splits if there is a space after it.
         lines = re.split(r'(?<=[.!?])\s+', doc.page_content)
         for line in lines:
             clean = line.strip()
-            if clean:
+            dedupe_key = re.sub(r'\s+', ' ', clean).lower().strip(".!?;:,")#explanation-I
+            if clean and dedupe_key not in seen_sentences:
+                seen_sentences.add(dedupe_key)
                 sentences.append((clean, doc.metadata))
 
     if not sentences:
@@ -44,6 +48,7 @@ def compress_context(query, docs):
     top_sentences = [item for item in reranked if item[1] > threshold][:5]
 
     if not top_sentences:
+        logger.info("context compression fallback activated..")
         top_sentences = reranked[:3]
 
     context = ""
@@ -55,7 +60,7 @@ def compress_context(query, docs):
         source = metadata.get("source")
         if source:
             sources.append(source)
-
+    logger.info(f"After context compressor, context built with '{len(top_sentences)}' sentences")
     return context, list(set(sources))
 
 
@@ -91,6 +96,7 @@ def retrieve_context(query, k=8, metadata_filter: dict | None = None):
     )
 
     top_docs = [doc for doc, score in reranked[:3]]
+    logger.info(f"After rerank '{len(top_docs)}' chunks sent to context compression")
     context, sources = compress_context(query, top_docs)
 
     return context, sources

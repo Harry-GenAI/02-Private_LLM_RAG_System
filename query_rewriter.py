@@ -39,11 +39,14 @@ def rewrite_query(query:str, history:str)->str:
     Rewritten Query:
     """
 
-    client = OpenAI(api_key=os.getenv("OpenAI_KEY"))
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     response = client.responses.create(
         input=prompt,
         model="gpt-5-nano",
-        max_output_tokens=120
+        max_output_tokens=300,
+        reasoning={"effort": "minimal"},#query rewriting doesn't need deep reasoning, which will save tokens..
+        
     )
 
-    return response.output_text.strip()
+    rewritten_query = response.output_text.strip()
+    return rewritten_query or query.strip()

@@ -29,6 +29,8 @@ notes.py
 *.docx
 core-key.pem
 *.txt
+/git_scree*
+/other
 
 
 # Tool/cache folders

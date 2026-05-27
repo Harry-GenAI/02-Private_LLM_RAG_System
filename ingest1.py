@@ -10,7 +10,7 @@ embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # 2. Preprocessing fun or Clean Text Function (Regex to fix PDF line breaks)
 def clean_text(text):
-    print("starting ingesting")
+    
     # Replace single \n with space, but don't touch double \n\n
     text = re.sub(r'(?<!\n)\n(?!\n)', ' ', text)
     # Collapse multiple spaces into one
@@ -66,7 +66,7 @@ def build_vectordb(chunks):
     vector_db = Chroma.from_documents(
         documents=chunks,
         embedding=embedding_model,
-        persist_directory="./chroma_db",
+        persist_directory="./chroma_db1",
         collection_metadata={"hnsw:space": "cosine"}
     )
     vector_db.persist()
@@ -83,11 +83,15 @@ def main():
     chunks = create_chunks(documents)
     
     # Build Database
-    # build_vectordb(chunks)
+    build_vectordb(chunks)
+
+    print(f"\n\n--------length of db with {len(chunks)}chunks---------\n\n")
+    for i, document in enumerate(chunks, start=1):
+        print(f"chunk{i}:\n {document}\n")
     
-    for i, document in enumerate(documents):
+    '''for i, document in enumerate(documents):
         print(f"doc{i}\n {document}\n\n")
-    #print(documents)
+    print(documents)'''
 
 if __name__ == "__main__":
     main()

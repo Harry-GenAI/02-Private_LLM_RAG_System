@@ -5,6 +5,7 @@ from langchain_community.vectorstores import Chroma
 from logger import logger
 import os
 import re
+import shutil
 
 
 
@@ -60,6 +61,8 @@ def create_chunks(docs):
 
 #embd docs and add in vectordb (chroma)
 def build_vectordb(chunks):
+   if os.path.exists("./chroma_db"):
+      shutil.rmtree("./chroma_db")
 
    texts = [chunk.page_content for chunk in chunks]
    metadatas=[chunk.metadata for chunk in chunks]
@@ -78,7 +81,7 @@ def build_vectordb(chunks):
 
 #main()
 def main():
-   logger.info("ingestion pipeline started")
+   logger.info("\n---ingestion pipeline started---")
    documents = load_docs()
    chunks = create_chunks(documents)
    build_vectordb(chunks)
