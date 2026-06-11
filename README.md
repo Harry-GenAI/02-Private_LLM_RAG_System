@@ -136,6 +136,13 @@ Project validation screenshots are stored in `git_screenshots/`.
 
 ![Grafana token metrics dashboard](git_screenshots/grafana_tokens.png)
 
+## Future Upgrades
+
+- Deploy the RAG stack on AWS EKS using Helm charts for repeatable Kubernetes releases.
+- Benchmark larger local models beyond the current 1B setup, starting with 3B or 5B models and moving toward a 7B model when GPU resources allow.
+- Add automated evaluation with RAG quality metrics such as faithfulness, context relevance, and answer correctness.
+- Improve production readiness with CI/CD, health checks, autoscaling, and centralized logging.
+
 ## Git Notes
 
 The following are intentionally ignored because they are private, generated, or too large for Git:
