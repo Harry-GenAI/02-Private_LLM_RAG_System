@@ -1,4 +1,4 @@
-# Private LLM RAG System
+# Project-02-Private LLM RAG System
 
 A private RAG application that ingests PDF documents, stores embeddings in ChromaDB, retrieves relevant context, and serves answers from a locally saved Hugging Face causal language model. The project also includes a vLLM serving path with Prometheus and Grafana telemetry for GPU studio deployments.
 
@@ -122,11 +122,19 @@ http_requests_total
 
 ## Validation Screenshots
 
-For a concise project demo, three screenshots are enough:
+Project validation screenshots are stored in `git_screenshots/`.
 
-1. vLLM running with successful `curl http://localhost:8000/v1/models` and `/metrics`
-2. Prometheus target page or API response showing the `vllm` target as healthy
-3. Grafana data source or dashboard showing Prometheus successfully connected
+### FastAPI Swagger
+
+![FastAPI Swagger UI](git_screenshots/fastapi_swagger.png)
+
+### vLLM Server
+
+![vLLM server running](git_screenshots/vllm.png)
+
+### Grafana Token Metrics
+
+![Grafana token metrics dashboard](git_screenshots/grafana_tokens.png)
 
 ## Git Notes
 
